@@ -1,0 +1,253 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Encabezado -->
+    <div class="p-5 mb-4 bg-primary bg-gradient text-white rounded-3 no-print">
+        <div class="container-fluid py-3">
+            <h1 class="display-5 fw-bold">Predicción de Dengue</h1>
+            <p class="col-md-8 fs-5">Complete el formulario con los datos del paciente para realizar una predicción sobre la clasificación del caso de dengue.</p>
+        </div>
+    </div>
+
+    <!-- Formulario de Predicción -->
+    <div class="card border-0 shadow-sm no-print">
+        <div class="card-body">
+            <form method="POST" class="needs-validation" novalidate>
+                <!-- Datos Demográficos -->
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <h4 class="mb-3 text-primary">
+                            <i class="fas fa-user me-2"></i>Datos Demográficos
+                        </h4>
+                        <hr class="text-muted">
+                    </div>
+                    
+                    <div class="col-md-4 mb-3">
+                        <label for="edad_" class="form-label">Edad</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-calendar-alt"></i></span>
+                            <input type="number" class="form-control" id="edad_" name="edad_" 
+                                   min="0" max="120" required>
+                        </div>
+                        <div class="invalid-feedback">
+                            Por favor ingrese una edad válida
+                        </div>
+                    </div>
+
+                    <div class="col-md-4 mb-3">
+                        <label for="sexo_" class="form-label">Sexo</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-venus-mars"></i></span>
+                            <select class="form-select" id="sexo_" name="sexo_" required>
+                                <option value="">Seleccione...</option>
+                                <option value="M">Masculino</option>
+                                <option value="F">Femenino</option>
+                            </select>
+                        </div>
+                        <div class="invalid-feedback">
+                            Por favor seleccione el sexo
+                        </div>
+                    </div>
+
+                    <div class="col-md-4 mb-3">
+                        <label for="estrato_" class="form-label">Estrato Socioeconómico</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-layer-group"></i></span>
+                            <select class="form-select" id="estrato_" name="estrato_" required>
+                                <option value="">Seleccione...</option>
+                                {% for i in range(1, 7) %}
+                                    <option value="{{ i }}">{{ i }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="invalid-feedback">
+                            Por favor seleccione el estrato
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Antecedentes -->
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <h4 class="mb-3 text-primary">
+                            <i class="fas fa-history me-2"></i>Antecedentes
+                        </h4>
+                        <hr class="text-muted">
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Situación de desplazamiento</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-walking"></i></span>
+                            <select class="form-select" name="desplazami" required>
+                                <option value="">Seleccione...</option>
+                                <option value="1">Sí</option>
+                                <option value="2">No</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Antecedentes familiares de dengue</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-users"></i></span>
+                            <select class="form-select" name="famantdngu" required>
+                                <option value="">Seleccione...</option>
+                                <option value="1">Sí</option>
+                                <option value="2">No</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Síntomas -->
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <h4 class="mb-3 text-primary">
+                            <i class="fas fa-notes-medical me-2"></i>Síntomas
+                        </h4>
+                        <hr class="text-muted">
+                    </div>
+
+                    {% set sintomas = [
+                        ('fiebre', 'Fiebre', 'temperature-high'),
+                        ('cefalea', 'Dolor de cabeza', 'head-side-virus'),
+                        ('dolrretroo', 'Dolor retro-orbital', 'eye'),
+                        ('malgias', 'Dolor muscular', 'child'),
+                        ('artralgia', 'Dolor articular', 'bone'),
+                        ('erupcionr', 'Erupción cutánea', 'allergies'),
+                        ('dolor_abdo', 'Dolor abdominal', 'stomach'),
+                        ('vomito', 'Vómitos', 'head-side-cough'),
+                        ('diarrea', 'Diarrea', 'toilet'),
+                        ('somnolenci', 'Somnolencia', 'bed')
+                    ] %}
+
+                    {% for id, label, icon in sintomas %}
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">{{ label }}</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-{{ icon }}"></i></span>
+                            <select class="form-select" name="{{ id }}" required>
+                                <option value="">Seleccione...</option>
+                                <option value="1">Sí</option>
+                                <option value="2">No</option>
+                            </select>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <!-- Botones -->
+                <div class="row">
+                    <div class="col-12 text-center">
+                        <button type="submit" class="btn btn-primary btn-lg px-5">
+                            <i class="fas fa-stethoscope me-2"></i>Realizar Predicción
+                        </button>
+                        <button type="reset" class="btn btn-secondary btn-lg px-5 ms-2">
+                            <i class="fas fa-undo me-2"></i>Limpiar Formulario
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Resultado de la Predicción -->
+    {% if show_result %}
+    <div class="card mt-4 border-0 shadow-sm result-section">
+        <div class="card-body">
+            <h4 class="card-title text-primary mb-4">
+                <i class="fas fa-clipboard-check me-2"></i>Resultado del Análisis
+            </h4>
+            
+            <!-- Predicción -->
+            <div class="alert alert-{{ recommendations.specific.severity }} mb-4">
+                <div class="d-flex align-items-center">
+                    <div class="flex-shrink-0">
+                        <i class="fas fa-{{ recommendations.specific.icon }} fa-3x me-3"></i>
+                    </div>
+                    <div class="flex-grow-1">
+                        <h4 class="alert-heading mb-2">{{ recommendations.specific.title }}</h4>
+                        <p class="mb-0 fs-5">Clasificación: {{ prediction }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recomendaciones -->
+            <div class="row">
+                <!-- Recomendaciones Específicas -->
+                <div class="col-md-6 mb-4">
+                    <div class="card h-100 border-{{ recommendations.specific.severity }}">
+                        <div class="card-header bg-{{ recommendations.specific.severity }} text-white">
+                            <h5 class="card-title mb-0">
+                                <i class="fas fa-{{ recommendations.specific.icon }} me-2"></i>
+                                Recomendaciones Específicas
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <ul class="list-group list-group-flush">
+                                {% for rec in recommendations.specific.specific %}
+                                <li class="list-group-item">
+                                    <i class="fas fa-check-circle text-{{ recommendations.specific.severity }} me-2"></i>
+                                    {{ rec }}
+                                </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recomendaciones Generales -->
+                <div class="col-md-6 mb-4">
+                    <div class="card h-100">
+                        <div class="card-header bg-info text-white">
+                            <h5 class="card-title mb-0">
+                                <i class="fas fa-list-ul me-2"></i>
+                                Recomendaciones Generales
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <ul class="list-group list-group-flush">
+                                {% for rec in recommendations.general %}
+                                <li class="list-group-item">
+                                    <i class="fas fa-info-circle text-info me-2"></i>
+                                    {{ rec }}
+                                </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Botón de Imprimir -->
+            <div class="text-center mt-3 no-print">
+                <button onclick="window.print()" class="btn btn-secondary btn-lg">
+                    <i class="fas fa-print me-2"></i>Imprimir Resultados
+                </button>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Validación de formulario con JavaScript -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Fetch all forms that we want to apply validation styles to
+    var forms = document.querySelectorAll('.needs-validation');
+
+    // Loop over them and prevent submission
+    Array.prototype.slice.call(forms).forEach(function(form) {
+        form.addEventListener('submit', function(event) {
+            if (!form.checkValidity()) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+            form.classList.add('was-validated');
+        }, false);
+    });
+});
+</script>
+{% endblock %}

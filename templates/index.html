@@ -1,0 +1,362 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Hero Section Mejorado -->
+    <div class="hero-section p-5 mb-4 bg-primary bg-opacity-75 text-white rounded-3 position-relative overflow-hidden">
+        <img src="{{ url_for('static', filename='IAdengue.jpg') }}" alt="IA Dengue" 
+             class="position-absolute top-0 start-0 w-100 h-100" 
+             style="object-fit: cover; opacity: 0.15; filter: blur(1px);">
+        <div class="container-fluid py-5 position-relative">
+            <div class="row align-items-center">
+                <div class="col-lg-8 col-md-7">
+                    <h1 class="display-4 fw-bold mb-4">Sistema Inteligente de Predicción de Dengue</h1>
+                    <p class="fs-4 mb-4">Una herramienta innovadora que combina la inteligencia artificial con la experiencia médica para la detección temprana y clasificación precisa de casos de dengue.</p>
+                    <div class="d-flex gap-3">
+                        <a href="{{ url_for('predict') }}" class="btn btn-light btn-lg px-4 py-2">
+                            <i class="fas fa-stethoscope me-2"></i>Realizar Predicción
+                        </a>
+                        <a href="{{ url_for('train') }}" class="btn btn-outline-light btn-lg px-4 py-2">
+                            <i class="fas fa-cogs me-2"></i>Entrenar Modelo
+                        </a>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-5 mt-4 mt-md-0 text-center">
+                    <div class="hero-image-container">
+                        <img src="{{ url_for('static', filename='IAdengue.jpg') }}" alt="IA Dengue" 
+                             class="img-fluid rounded-circle bg-white p-2 shadow-lg" 
+                             style="width: 280px; height: 280px; object-fit: cover;">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Información Principal -->
+    <div class="row g-4 mb-4">
+        <!-- ¿Qué es el Dengue? -->
+        <div class="col-lg-6">
+            <div class="card h-100 border-0 shadow-sm hover-card">
+                <div class="card-header bg-primary bg-opacity-75 text-white py-3">
+                    <h3 class="card-title mb-0">
+                        <i class="fas fa-virus me-2"></i>¿Qué es el Dengue?
+                    </h3>
+                </div>
+                <div class="card-body bg-white">
+                    <div class="info-container mb-4">
+                        <div class="row align-items-center">
+                            <div class="col-md-5">
+                                <div class="image-container mb-3 mb-md-0">
+                                    <img src="{{ url_for('static', filename='mosquito.jpg') }}" alt="Mosquito Aedes" 
+                                         class="rounded shadow-sm w-100" 
+                                         style="height: 200px; object-fit: cover;">
+                                </div>
+                            </div>
+                            <div class="col-md-7">
+                                <p class="lead text-dark">El dengue es una infección viral transmitida por mosquitos que representa un importante desafío para la salud pública global.</p>
+                                <p class="text-dark">Es transmitida principalmente por el mosquito Aedes aegypti y puede causar una amplia gama de síntomas.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h5 class="text-primary border-bottom pb-2 mb-3">
+                        <i class="fas fa-exclamation-circle me-2"></i>Principales Síntomas
+                    </h5>
+                    <div class="row g-3">
+                        {% set symptoms = [
+                            ('temperature-high', 'Fiebre alta (40°C)', 'danger', 'bg-danger bg-opacity-10'),
+                            ('head-side-virus', 'Dolor de cabeza severo', 'warning', 'bg-warning bg-opacity-10'),
+                            ('eye', 'Dolor retro-ocular', 'info', 'bg-info bg-opacity-10'),
+                            ('bone', 'Dolores musculares', 'primary', 'bg-primary bg-opacity-10'),
+                            ('head-side-cough', 'Náuseas y vómitos', 'success', 'bg-success bg-opacity-10'),
+                            ('bed', 'Fatiga extrema', 'secondary', 'bg-secondary bg-opacity-10')
+                        ] %}
+                        
+                        {% for icon, symptom, color, bg in symptoms %}
+                        <div class="col-md-6">
+                            <div class="symptom-card p-3 rounded {{ bg }} border-start border-{{ color }} border-4">
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-{{ icon }} text-{{ color }} me-3 fa-lg"></i>
+                                    <span class="text-dark">{{ symptom }}</span>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+<!-- Clasificación del Dengue -->
+<div class="col-lg-6">
+    <div class="card h-100 border-0 shadow-sm hover-card">
+        <div class="card-header bg-warning bg-opacity-75 text-dark py-3">
+            <h3 class="card-title mb-0">
+                <i class="fas fa-exclamation-triangle me-2"></i>Clasificación del Dengue
+            </h3>
+        </div>
+        <div class="card-body bg-white">
+            <div class="classification-container mb-4">
+                <div class="row align-items-center">
+                    <div class="col-md-5">
+                        <div class="image-container mb-3 mb-md-0">
+                            <img src="{{ url_for('static', filename='sintomas.jpg') }}" alt="Síntomas Dengue" 
+                                 class="rounded shadow-sm w-100" 
+                                 style="height: 200px; object-fit: cover;">
+                        </div>
+                    </div>
+                    <div class="col-md-7">
+                        <p class="lead text-dark">La clasificación del dengue permite identificar la gravedad de la enfermedad y determinar el tipo de atención médica necesaria para cada paciente.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="classification-levels">
+                <!-- Nivel 1 -->
+                <div class="classification-card mb-3 rounded-3 bg-success bg-opacity-10 p-3 border-start border-success border-4">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <h5 class="text-success mb-0">
+                            <i class="fas fa-check-circle me-2"></i>Sin Signos de Alarma
+                        </h5>
+                        <span class="badge bg-success">Nivel 1</span>
+                    </div>
+                    <p class="mb-0 text-dark">Presenta síndrome febril inespecífico. Requiere seguimiento y cuidados básicos.</p>
+                </div>
+
+                <!-- Nivel 2 -->
+                <div class="classification-card mb-3 rounded-3 bg-warning bg-opacity-10 p-3 border-start border-warning border-4">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <h5 class="text-warning mb-0">
+                            <i class="fas fa-exclamation-circle me-2"></i>Con Signos de Alarma
+                        </h5>
+                        <span class="badge bg-warning text-dark">Nivel 2</span>
+                    </div>
+                    <p class="mb-0 text-dark">Incluye dolor abdominal, vómitos persistentes, sangrado de mucosas y alteraciones del estado de conciencia.</p>
+                </div>
+
+                <!-- Nivel 3 -->
+                <div class="classification-card rounded-3 bg-danger bg-opacity-10 p-3 border-start border-danger border-4">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <h5 class="text-danger mb-0">
+                            <i class="fas fa-radiation-alt me-2"></i>Dengue Grave
+                        </h5>
+                        <span class="badge bg-danger">Nivel 3</span>
+                    </div>
+                    <p class="mb-0 text-dark">Presenta choque por extravasación, dificultad respiratoria, sangrado severo o daño grave de órganos.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Prevención y Control -->
+<div class="card border-0 shadow-sm mb-4 hover-card">
+    <div class="card-header bg-success bg-opacity-75 text-white py-3">
+        <h3 class="card-title mb-0">
+            <i class="fas fa-shield-virus me-2"></i>Prevención y Control
+        </h3>
+    </div>
+    <div class="card-body bg-white">
+        <div class="row">
+            <div class="col-lg-4 mb-4 mb-lg-0">
+                <div class="prevention-images">
+                    <div class="mb-3">
+                        <img src="{{ url_for('static', filename='medidas peeventivas.jpg') }}" 
+                             alt="Medidas Preventivas" 
+                             class="rounded shadow-sm w-100" 
+                             style="height: 400; object-fit: cover;">
+                    </div>
+                    
+                </div>
+            </div>
+            <div class="col-lg-8">
+                <div class="row g-3">
+                    {% set prevention_measures = [
+                        ('home', 'Control Doméstico', 'Mantener el hogar libre de criaderos de mosquitos', 'primary'),
+                        ('spray-can', 'Protección Personal', 'Usar repelente y ropa protectora', 'success'),
+                        ('trash', 'Eliminación de Criaderos', 'Eliminar recipientes que acumulen agua', 'info'),
+                        ('broom', 'Limpieza Regular', 'Mantener limpio el entorno de la vivienda', 'warning'),
+                        ('shield-virus', 'Barreras Físicas', 'Instalar mosquiteros en ventanas y puertas', 'danger'),
+                        ('hand-sparkles', 'Higiene Ambiental', 'Mantener áreas comunes limpias y secas', 'secondary')
+                    ] %}
+                    
+                    {% for icon, title, desc, color in prevention_measures %}
+                    <div class="col-md-6">
+                        <div class="prevention-card card h-100 bg-{{ color }} bg-opacity-10 border-0 hover-effect">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center mb-3">
+                                    <div class="prevention-icon bg-{{ color }} bg-opacity-25 me-3">
+                                        <i class="fas fa-{{ icon }} fa-2x text-{{ color }}"></i>
+                                    </div>
+                                    <h5 class="card-title mb-0 text-{{ color }}">{{ title }}</h5>
+                                </div>
+                                <p class="card-text text-dark">{{ desc }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Sistema de Predicción -->
+<div class="card border-0 shadow-sm mb-4 hover-card">
+    <div class="card-header bg-info bg-opacity-75 text-white py-3">
+        <h3 class="card-title mb-0">
+            <i class="fas fa-robot me-2"></i>Sistema de Predicción
+        </h3>
+    </div>
+    <div class="card-body bg-white">
+        <div class="row align-items-center">
+            <div class="col-md-7">
+                <h4 class="text-info mb-4">Inteligencia Artificial en la Detección del Dengue</h4>
+                <div class="row g-3 mb-4">
+                    <div class="col-md-6">
+                        <div class="feature-card bg-info bg-opacity-10 p-3 rounded-3 h-100 hover-effect">
+                            <h5 class="text-info">
+                                <i class="fas fa-brain me-2"></i>
+                                Análisis Avanzado
+                            </h5>
+                            <p class="mb-0 text-dark">Utilizamos algoritmos de aprendizaje profundo para analizar múltiples variables y patrones.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="feature-card bg-info bg-opacity-10 p-3 rounded-3 h-100 hover-effect">
+                            <h5 class="text-info">
+                                <i class="fas fa-chart-line me-2"></i>
+                                Alta Precisión
+                            </h5>
+                            <p class="mb-0 text-dark">Resultados respaldados por análisis estadístico y validación médica.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="d-grid gap-2 d-md-flex justify-content-md-start">
+                    <a href="{{ url_for('predict') }}" class="btn btn-info btn-lg me-md-2 text-white">
+                        <i class="fas fa-stethoscope me-2"></i>Comenzar Predicción
+                    </a>
+                    <a href="{{ url_for('train') }}" class="btn btn-outline-info btn-lg">
+                        <i class="fas fa-cogs me-2"></i>Gestionar Modelo
+                    </a>
+                </div>
+            </div>
+            <div class="col-md-5">
+                <div class="system-image text-center">
+                    <img src="{{ url_for('static', filename='IAdengue.jpg') }}" 
+                         alt="Sistema de IA" 
+                         class="img-fluid rounded-3 shadow"
+                         style="max-height: 300px; object-fit: cover;">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+<style>
+/* Estilos generales */
+body {
+    background-color: #f8f9fa;
+    color: #212529;
+}
+
+.hover-card {
+    transition: all 0.3s ease;
+    background-color: #ffffff;
+}
+
+.hover-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.1) !important;
+}
+
+/* Estilos para imágenes */
+.image-container {
+    overflow: hidden;
+    border-radius: 8px;
+}
+
+.image-container img {
+    transition: transform 0.5s ease;
+}
+
+.image-container:hover img {
+    transform: scale(1.05);
+}
+
+/* Hero Section */
+.hero-section {
+    background: linear-gradient(135deg, #0d6efd 0%, #0dcaf0 100%);
+}
+
+.hero-image-container img {
+    transition: transform 0.5s ease, box-shadow 0.5s ease;
+}
+
+.hero-image-container:hover img {
+    transform: scale(1.05) rotate(5deg);
+    box-shadow: 0 15px 30px rgba(0,0,0,0.2) !important;
+}
+
+/* Tarjetas */
+.symptom-card, .classification-card, .prevention-card, .feature-card {
+    transition: all 0.3s ease;
+}
+
+.symptom-card:hover, .classification-card:hover {
+    transform: translateX(5px);
+}
+
+.prevention-card:hover, .feature-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.prevention-icon {
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+}
+
+/* Botones */
+.btn {
+    transition: all 0.3s ease;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+/* Efectos hover generales */
+.hover-effect {
+    transition: all 0.3s ease;
+}
+
+.hover-effect:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .prevention-images img {
+        height: 200px !important;
+    }
+
+    .classification-card {
+        margin-bottom: 1rem;
+    }
+
+    .hero-image-container img {
+        width: 200px;
+        height: 200px;
+    }
+}
+</style>
+{% endblock %}

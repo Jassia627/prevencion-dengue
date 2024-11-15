@@ -1,0 +1,327 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Encabezado -->
+    <div class="p-5 mb-4 bg-primary bg-gradient text-white rounded-3">
+        <div class="container-fluid py-3">
+            <h1 class="display-5 fw-bold">
+                <i class="fas fa-brain me-2"></i>
+                Entrenamiento del Modelo
+            </h1>
+            <p class="col-md-8 fs-5">Este módulo permite entrenar el modelo de predicción usando datos históricos de casos de dengue.</p>
+        </div>
+    </div>
+
+    <!-- Guía del Archivo CSV -->
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-header bg-info bg-gradient text-white">
+            <h4 class="card-title mb-0">
+                <i class="fas fa-info-circle me-2"></i>
+                Guía de Preparación de Datos
+            </h4>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5 class="text-primary mb-3">
+                        <i class="fas fa-table me-2"></i>
+                        Estructura del Archivo CSV
+                    </h5>
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Variable</th>
+                                    <th>Tipo</th>
+                                    <th>Valores</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>edad_</td>
+                                    <td>Numérico</td>
+                                    <td>0-120</td>
+                                </tr>
+                                <tr>
+                                    <td>sexo_</td>
+                                    <td>Categórico</td>
+                                    <td>M, F</td>
+                                </tr>
+                                <tr>
+                                    <td>estrato_</td>
+                                    <td>Numérico</td>
+                                    <td>1-6</td>
+                                </tr>
+                                <tr>
+                                    <td>Variables binarias</td>
+                                    <td>Numérico</td>
+                                    <td>1 (Sí), 2 (No)</td>
+                                </tr>
+                                <tr>
+                                    <td>clasfinal</td>
+                                    <td>Numérico</td>
+                                    <td>0, 1, 2, 3</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <h5 class="text-primary mb-3">
+                        <i class="fas fa-check-circle me-2"></i>
+                        Variables Requeridas
+                    </h5>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <ul class="list-group">
+                                <li class="list-group-item">
+                                    <i class="fas fa-user me-2 text-primary"></i>edad_
+                                </li>
+                                <li class="list-group-item">
+                                    <i class="fas fa-venus-mars me-2 text-primary"></i>sexo_
+                                </li>
+                                <li class="list-group-item">
+                                    <i class="fas fa-layer-group me-2 text-primary"></i>estrato_
+                                </li>
+                                <li class="list-group-item">
+                                    <i class="fas fa-walking me-2 text-primary"></i>desplazami
+                                </li>
+                                <li class="list-group-item">
+                                    <i class="fas fa-users me-2 text-primary"></i>famantdngu
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <ul class="list-group">
+                                <li class="list-group-item">
+                                    <i class="fas fa-thermometer-half me-2 text-warning"></i>fiebre
+                                </li>
+                                <li class="list-group-item">
+                                    <i class="fas fa-head-side-virus me-2 text-warning"></i>cefalea
+                                </li>
+                                <li class="list-group-item">
+                                    <i class="fas fa-eye me-2 text-warning"></i>dolrretroo
+                                </li>
+                                <li class="list-group-item">
+                                    <i class="fas fa-bone me-2 text-warning"></i>malgias
+                                </li>
+                                <li class="list-group-item">
+                                    <i class="fas fa-joint me-2 text-warning"></i>artralgia
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Formulario de Entrenamiento -->
+    <div class="card border-0 shadow-sm">
+        <div class="card-header bg-primary bg-gradient text-white">
+            <h4 class="card-title mb-0">
+                <i class="fas fa-cogs me-2"></i>
+                Configuración del Entrenamiento
+            </h4>
+        </div>
+        <div class="card-body">
+            <form method="POST" enctype="multipart/form-data" class="needs-validation" novalidate>
+                <div class="row mb-4">
+                    <!-- Selección de Archivo -->
+                    <div class="col-md-12 mb-4">
+                        <div class="card bg-light">
+                            <div class="card-body">
+                                <h5 class="card-title text-primary">
+                                    <i class="fas fa-file-csv me-2"></i>
+                                    Datos de Entrenamiento
+                                </h5>
+                                <div class="mb-3">
+                                    <label for="file" class="form-label">Archivo CSV con datos históricos</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fas fa-upload"></i></span>
+                                        <input type="file" class="form-control" id="file" name="file" 
+                                               accept=".csv" required>
+                                    </div>
+                                    <div class="form-text">
+                                        Asegúrese de que el archivo contenga todas las variables requeridas y siga el formato especificado.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Configuración de la Red Neuronal -->
+                    <div class="col-md-12">
+                        <div class="card bg-light">
+                            <div class="card-body">
+                                <h5 class="card-title text-primary">
+                                    <i class="fas fa-network-wired me-2"></i>
+                                    Configuración de la Red Neuronal
+                                </h5>
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="hidden_layers" class="form-label">Arquitectura de Capas Ocultas</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text"><i class="fas fa-layer-group"></i></span>
+                                            <input type="text" class="form-control" id="hidden_layers" 
+                                                   name="hidden_layers" value="100,50" required
+                                                   pattern="^\d+(?:,\d+)*$">
+                                        </div>
+                                        <div class="form-text">
+                                            <i class="fas fa-info-circle me-1"></i>
+                                            Neuronas por capa, separadas por comas (ej: 100,50)
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6 mb-3">
+                                        <label for="learning_rate" class="form-label">Tasa de Aprendizaje</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text"><i class="fas fa-tachometer-alt"></i></span>
+                                            <input type="text" class="form-control" id="learning_rate" 
+                                                   name="learning_rate" value="0.001" required
+                                                   pattern="^0?\.[0-9]+$">
+                                        </div>
+                                        <div class="form-text">
+                                            <i class="fas fa-info-circle me-1"></i>
+                                            Valor decimal entre 0 y 1 (recomendado: 0.001)
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Botones -->
+                <div class="text-center">
+                    <button type="submit" class="btn btn-primary btn-lg px-5">
+                        <i class="fas fa-play-circle me-2"></i>Iniciar Entrenamiento
+                    </button>
+                    <button type="reset" class="btn btn-secondary btn-lg px-5 ms-2">
+                        <i class="fas fa-undo me-2"></i>Restablecer
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Resultados del Entrenamiento -->
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <div class="card mt-4 border-0 shadow-sm">
+            <div class="card-header bg-success bg-gradient text-white">
+                <h4 class="card-title mb-0">
+                    <i class="fas fa-chart-line me-2"></i>
+                    Resultados del Entrenamiento
+                </h4>
+            </div>
+            <div class="card-body">
+                {% for message in messages %}
+                    <div class="alert alert-success">
+                        <h5 class="alert-heading">
+                            <i class="fas fa-check-circle me-2"></i>
+                            Resumen del Entrenamiento
+                        </h5>
+                        {% for line in message.split('\n') %}
+                            <p class="mb-0">{{ line }}</p>
+                        {% endfor %}
+                    </div>
+
+                    <!-- Métricas Visuales -->
+                    <div class="row mt-4">
+                        <div class="col-md-6">
+                            <div class="card border-success">
+                                <div class="card-body text-center">
+                                    <h5 class="card-title text-success">
+                                        <i class="fas fa-graduation-cap me-2"></i>
+                                        Precisión en Entrenamiento
+                                    </h5>
+                                    <h2 class="display-4">
+                                        {% if 'Precisión entrenamiento' in message %}
+                                            {{ message.split('Precisión entrenamiento:')[1].split('\n')[0] }}
+                                        {% endif %}
+                                    </h2>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card border-primary">
+                                <div class="card-body text-center">
+                                    <h5 class="card-title text-primary">
+                                        <i class="fas fa-vial me-2"></i>
+                                        Precisión en Pruebas
+                                    </h5>
+                                    <h2 class="display-4">
+                                        {% if 'Precisión prueba' in message %}
+                                            {{ message.split('Precisión prueba:')[1].split('\n')[0] }}
+                                        {% endif %}
+                                    </h2>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Estadísticas de Datos -->
+                    <div class="row mt-4">
+                        <div class="col-md-4">
+                            <div class="card bg-light">
+                                <div class="card-body text-center">
+                                    <h6 class="text-muted">Total de Registros</h6>
+                                    <h3>
+                                        {% if 'Filas totales' in message %}
+                                            {{ message.split('Filas totales:')[1].split('\n')[0] }}
+                                        {% endif %}
+                                    </h3>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card bg-light">
+                                <div class="card-body text-center">
+                                    <h6 class="text-muted">Registros Eliminados</h6>
+                                    <h3>
+                                        {% if 'Filas eliminadas' in message %}
+                                            {{ message.split('Filas eliminadas:')[1].split('\n')[0] }}
+                                        {% endif %}
+                                    </h3>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card bg-light">
+                                <div class="card-body text-center">
+                                    <h6 class="text-muted">Registros Utilizados</h6>
+                                    <h3>
+                                        {% if 'Filas utilizadas' in message %}
+                                            {{ message.split('Filas utilizadas:')[1].split('\n')[0] }}
+                                        {% endif %}
+                                    </h3>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    {% endwith %}
+</div>
+
+<!-- Validación de formulario con JavaScript -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var forms = document.querySelectorAll('.needs-validation');
+    
+    Array.prototype.slice.call(forms).forEach(function(form) {
+        form.addEventListener('submit', function(event) {
+            if (!form.checkValidity()) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+            form.classList.add('was-validated');
+        }, false);
+    });
+});
+</script>
+{% endblock %}

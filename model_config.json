@@ -1,0 +1,1 @@
+{"feature_columns": ["edad_", "estrato_", "desplazami", "famantdngu", "fiebre", "cefalea", "dolrretroo", "malgias", "artralgia", "erupcionr", "dolor_abdo", "vomito", "diarrea", "somnolenci", "sexo__F", "sexo__M"], "hidden_layers": "100,50", "learning_rate": "0.001"}
