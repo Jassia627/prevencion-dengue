@@ -601,7 +601,7 @@ def analyze_symptoms(text):
     symptom_keywords = {
             'Cefalea': [
                 # Términos médicos
-                'cefalea', 'migraña', 'jaqueca', 'dolor craneal','cabeza',
+                'cefalea', 'migraña', 'jaqueca', 'dolor craneal',
                 # Expresiones coloquiales
                 'dolor de cabeza', 'me duele la cabeza', 'tengo la cabeza como un bombo',
                 'siento que me va a estallar la cabeza', 'me está taladrando la cabeza',

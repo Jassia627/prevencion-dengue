@@ -96,12 +96,12 @@
                     <div class="bg-white p-4 rounded-lg shadow-sm col-span-2">
                         <div id="casos-semana" class="h-[300px]"></div>
                     </div>
-                    
+
                     <!-- Top 5 Barrios -->
                     <div class="bg-white p-4 rounded-lg shadow-sm">
                         <div id="barrios" class="h-[300px]"></div>
                     </div>
-                    
+
                     <!-- Grupos de Edad -->
                     <div class="bg-white p-4 rounded-lg shadow-sm">
                         <div id="grupos-edad" class="h-[300px]"></div>
@@ -200,7 +200,7 @@
         {% if plots.genero %}
         Plotly.newPlot('genero', {{ plots.genero | safe }}, layouts.genero);
         {% endif %}
-        
+
         {% if plots.barrios %}
         Plotly.newPlot('barrios', {{ plots.barrios | safe }}, layouts.barrios);
         {% endif %}
