@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Dengue</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 text-gray-800 min-h-screen">
+    <div class="container mx-auto p-4 max-w-full">
+        <!-- Header -->
+        <div class="flex justify-between items-center mb-6">
+            <h1 class="text-3xl font-bold text-primary">Dashboard Dengue</h1>
+            <div class="flex items-center gap-2">
+                <div class="flex items-center space-x-4">
+                    <label for="year" class="text-lg">Filtrar por año:</label>
+                    <select id="year" onchange="window.location.href='/dashboard?year=' + this.value" 
+                            class="bg-white text-gray-800 px-4 py-2 rounded-lg border border-gray-300">
+                        <option value="">Todos los años</option>
+                        {% for year in years %}
+                        <option value="{{ year }}" {% if year == selected_year %}selected{% endif %}>
+                            {{ year }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dashboard Grid -->
+        <div class="grid grid-cols-12 gap-6">
+            <!-- Left Column -->
+            <div class="col-span-2">
+                <!-- Total Casos -->
+                <div class="bg-white p-4 rounded-lg shadow-sm mb-6">
+                    <h2 class="text-sm text-gray-600 mb-1">Total Casos</h2>
+                    <p class="text-4xl font-bold text-blue-600">{{ kpis.total_casos }}</p>
+                </div>
+
+                <!-- Distribución -->
+                <div class="bg-white p-4 rounded-lg shadow-sm mb-6">
+                    <h2 class="text-sm text-gray-600 mb-3">Distribución por Clasificación</h2>
+                    {% for clasificacion, datos in kpis.clasfinal_stats.distribucion.items() %}
+                    <div class="mb-2">
+                        <div class="flex justify-between items-center mb-1">
+                            <span class="text-sm">{{ clasificacion }}</span>
+                            <span class="text-blue-600">{{ datos }}</span>
+                        </div>
+                        <div class="text-xs text-gray-500">
+                            {{ kpis.clasfinal_stats.porcentajes[clasificacion] }}%
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <!-- Edad Stats -->
+                <div class="bg-white p-4 rounded-lg shadow-sm mb-6">
+                    <div class="mb-4">
+                        <h2 class="text-sm text-gray-600 mb-1">Edad Promedio</h2>
+                        <p class="text-2xl font-bold text-indigo-600">{{ kpis.edad_promedio }} años</p>
+                    </div>
+                    <div>
+                        <h2 class="text-sm text-gray-600 mb-1">Edad Mediana</h2>
+                        <p class="text-2xl font-bold text-purple-600">{{ kpis.edad_mediana }} años</p>
+                    </div>
+                </div>
+
+                <!-- Casos por Género -->
+                <div class="bg-white p-4 rounded-lg shadow-sm flex-grow">
+                    <div id="genero" class="h-[300px]"></div>
+                </div>
+            </div>
+
+            <!-- Center Column -->
+            <div class="col-span-7">
+                <!-- KPIs Row -->
+                <div class="grid grid-cols-3 gap-4 mb-6">
+                    <div class="bg-white p-4 rounded-lg shadow-sm">
+                        <h2 class="text-sm text-gray-600 mb-1">Casos Confirmados</h2>
+                        <p class="text-2xl font-bold text-green-600">{{ kpis.casos_confirmados }}</p>
+                    </div>
+                    <div class="bg-white p-4 rounded-lg shadow-sm">
+                        <h2 class="text-sm text-gray-600 mb-1">Promedio Semanal</h2>
+                        <p class="text-2xl font-bold text-pink-600">{{ kpis.casos_semanales_promedio }}</p>
+                    </div>
+                    <div class="bg-white p-4 rounded-lg shadow-sm">
+                        <h2 class="text-sm text-gray-600 mb-1">Casos Pediátricos</h2>
+                        <p class="text-2xl font-bold text-orange-600">{{ kpis.casos_pediatricos }}</p>
+                    </div>
+                </div>
+
+                <!-- Charts Grid -->
+                <div class="grid grid-cols-2 gap-6">
+                    <!-- Casos por Semana Epidemiológica -->
+                    <div class="bg-white p-4 rounded-lg shadow-sm col-span-2">
+                        <div id="casos-semana" class="h-[300px]"></div>
+                    </div>
+                    
+                    <!-- Top 5 Barrios -->
+                    <div class="bg-white p-4 rounded-lg shadow-sm">
+                        <div id="barrios" class="h-[300px]"></div>
+                    </div>
+                    
+                    <!-- Grupos de Edad -->
+                    <div class="bg-white p-4 rounded-lg shadow-sm">
+                        <div id="grupos-edad" class="h-[300px]"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column -->
+            <div class="col-span-3 flex flex-col">
+                <!-- Top 5 Barrios -->
+                <div class="bg-white p-4 rounded-lg shadow-sm mb-6">
+                    <h2 class="text-sm text-gray-600 mb-3">Top 5 Barrios</h2>
+                    {% for barrio, cantidad in kpis.top_barrios.items() %}
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="text-sm truncate text-gray-800">{{ barrio }}</span>
+                        <span class="text-orange-600">{{ cantidad }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <!-- Frecuencia de Síntomas -->
+                <div class="bg-white p-4 rounded-lg shadow-sm flex-grow">
+                    <div id="frecuencia-sintomas" class="h-[500px]"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Configuración base para todos los gráficos
+        const baseLayout = {
+            font: { 
+                color: '#1F2937', // text-gray-800
+                size: 10
+            },
+            paper_bgcolor: '#FFFFFF',
+            plot_bgcolor: '#FFFFFF',
+            margin: { t: 20, r: 20, l: 50, b: 50 },
+            showlegend: true,
+            legend: {
+                font: { size: 10 },
+                orientation: 'h',
+                y: -0.2
+            },
+            xaxis: {
+                showgrid: true,
+                gridcolor: '#E5E7EB', // gray-200
+                tickfont: { size: 10 }
+            },
+            yaxis: {
+                showgrid: true,
+                gridcolor: '#E5E7EB', // gray-200
+                tickfont: { size: 10 }
+            }
+        };
+
+        // Configuraciones específicas para cada gráfico
+        const layouts = {
+            casosSemana: {
+                ...baseLayout,
+                height: 300,
+                margin: { t: 20, r: 20, l: 50, b: 70 }
+            },
+            gruposEdad: {
+                ...baseLayout,
+                height: 300,
+                margin: { t: 20, r: 20, l: 50, b: 70 }
+            },
+            barrios: {
+                ...baseLayout,
+                height: 300,
+                margin: { t: 20, r: 20, l: 120, b: 50 }
+            },
+            genero: {
+                ...baseLayout,
+                height: 300,
+                showlegend: false,
+                margin: { t: 20, r: 20, l: 20, b: 20 }
+            },
+            frecuenciaSintomas: {
+                ...baseLayout,
+                height: 500,
+                margin: { t: 20, r: 20, l: 120, b: 50 }
+            },
+            clasfinalPie: {
+                ...baseLayout,
+                height: 300,
+                margin: { t: 20, r: 20, l: 20, b: 20 }
+            }
+        };
+
+        {% if plots.casos_semana %}
+        Plotly.newPlot('casos-semana', {{ plots.casos_semana | safe }}, layouts.casosSemana);
+        {% endif %}
+
+        {% if plots.genero %}
+        Plotly.newPlot('genero', {{ plots.genero | safe }}, layouts.genero);
+        {% endif %}
+        
+        {% if plots.barrios %}
+        Plotly.newPlot('barrios', {{ plots.barrios | safe }}, layouts.barrios);
+        {% endif %}
+
+        {% if plots.grupos_edad %}
+        Plotly.newPlot('grupos-edad', {{ plots.grupos_edad | safe }}, layouts.gruposEdad);
+        {% endif %}
+
+        {% if plots.frecuencia_sintomas %}
+        Plotly.newPlot('frecuencia-sintomas', {{ plots.frecuencia_sintomas | safe }}, layouts.frecuenciaSintomas);
+        {% endif %}
+
+        {% if plots.clasfinal_pie %}
+        Plotly.newPlot('clasfinal_pie', {{ plots.clasfinal_pie | safe }}, layouts.clasfinalPie);
+        {% endif %}
+
+        // Hacer los gráficos responsivos
+        window.addEventListener('resize', () => {
+            const graphs = document.querySelectorAll('[id^="casos-"], [id^="genero"], [id^="barrios"], [id^="grupos-"], [id^="frecuencia-"], [id^="clasfinal_"]');
+            graphs.forEach(graph => {
+                Plotly.Plots.resize(graph);
+            });
+        });
+    </script>
+</body>
+</html>
