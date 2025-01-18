@@ -1,6 +1,6 @@
 # 🌐 Dengue Prediction App
 
-Una aplicación web basada en **Flask** para predecir casos de dengue y visualizar datos históricos y proyectados. ¡Ideal para profesionales de la salud pública y para la gestión proactiva de casos de dengue! 🎯
+Una aplicación web basada en **Flask** para predecir casos de dengue y visualizar datos históricos y proyectados. desarrollado como preactica para un proyecto de aula para la materia de inteligencia artificial 🎯
 
 ## 🚀 Funcionalidades Principales
 
